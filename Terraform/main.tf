@@ -14,13 +14,18 @@ resource "digitalocean_droplet" "single" {
   image  = "${data.digitalocean_image.worker-snapshot.image}"
   name   = "single-droplet-node"
   region = "ams2"
-  size   = "512mb"
+  size   = "1gb"
 
   ssh_keys = [ "${digitalocean_ssh_key.single-droplet-ssh.id}" ]
 
   connection {
     user        = "root"
     private_key = "${file("../ssh/id_rsa")}"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/../nginx.conf"
+    destination = "/root/nginx.conf"
   }
 
   provisioner "remote-exec" {
